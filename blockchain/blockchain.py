@@ -1,14 +1,27 @@
 
 from flask import Flask, render_template
+from time import time
 
 
 class Blockchain:
     def __init__(self):
         self.transactions = []  # list of transactions
         self.chain = []  # list of blocks
+        # create the genesis block
+        self.create_block(0, '00')
 
-    def create_block(self, nonce):
-        self.nonce = nonce
+    def create_block(self, nonce, prev_hash):
+        block = {
+            'block_number': len(self.chain) + 1,
+            'nonce': nonce,
+            'prev_hash': prev_hash,
+            'timestamp': time(),  # when this block was mined
+            'transactions': self.transactions
+        }
+        # reset thw current list of transactions
+        self.transactions = []
+        # append to the chain
+        self.chain.append(block)
 
 
 # instantiate the blockchain
