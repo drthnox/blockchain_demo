@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "pythonPath": "${config:python.pythonPath}",
+      "python": "${command:python.interpreterPath}",
       "name": "RUN NODE",
       "type": "python",
       "request": "launch",
