@@ -11,3 +11,5 @@ def test_create_block():
     nonce = 12345
     bc.create_block(nonce, '0x01')
     assert len(bc.chain) == 2
+    assert bc.chain[1]['nonce'] == nonce
+    assert bc.chain[1]['prev_hash'] == '0x01'
