@@ -18,19 +18,19 @@ def index():
     return render_template('index.html')  # Flask will look inside templates/
 
 
-@app.route("/create/transaction")
+@app.route("/transaction/create")
 def create_transaction():
     # Flask will look inside templates/
     return render_template('create_transaction.html')
 
 
-@app.route("/view/transactions")
+@app.route("/transaction/viewAll")
 def view_transactions():
     # Flask will look inside templates/
     return render_template('view_transactions.html')
 
 
-@app.route("/create/wallet")
+@app.route("/wallet/create")
 def create_wallet():
     # Flask will look inside templates/
     return render_template('create_wallet.html')
