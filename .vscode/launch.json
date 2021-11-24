@@ -5,12 +5,23 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "python": "${command:python.interpreterPath}",
-      "name": "RUN NODE",
+      "name": "NODE 1",
       "type": "python",
       "request": "launch",
-      "program": "${file}",
-      "console": "integratedTerminal"
-    }
+      "program": "${fileWorkspaceFolder}/blockchain/blockchain.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {"PYTHONPATH": "${cwd}"}
+    },
+    {
+      "name": "CLIENT",
+      "type": "python",
+      "request": "launch",
+      "program": "${fileWorkspaceFolder}/blockchain_client/blockchain_client.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {"PYTHONPATH": "${cwd}"}
+    },
+
   ]
 }
