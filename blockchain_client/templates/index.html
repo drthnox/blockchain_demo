@@ -1,15 +1,7 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>
-<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>
-<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>
-<html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Blockchain Front End</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,6 +9,8 @@
     <link rel="stylesheet" href="../static/vendor/DataTables/css/datatables.min.css">
     <link rel="stylesheet" href="../static/vendor/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="../static/css/custom.css">
+
+
 </head>
 <body>
 
@@ -39,7 +33,7 @@
             <div class="card-body">
                 <h4 class="card-title">Wallet Generator</h4>
                 <p class="card-text">Click on the button below to generate your blockchain wallet</p>
-                <input type="button" class="btn btn-primary btn-lg" value="Generate Wallet" onclick="">
+                <input id="generateWallet" type="button" class="btn btn-primary btn-lg" value="Generate Wallet">
             </div>
         </div>
     </div>
@@ -73,16 +67,35 @@
     </div>
 </div>
 
-<script src="../static/vendor/jquery/jquery-3.6.0.min.js" async defer></script>
-<script src="../static/vendor/bootstrap/js/bootstrap.min.js" async defer></script>
-<script src="../static/vendor/DataTables/js/datatables.min.js" async defer></script>
-<script src="../static/vendor/DataTables/js/ellipsis.js" async defer></script>
+<script src="../static/vendor/jquery/jquery-3.6.0.min.js"></script>
+<script src="../static/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="../static/vendor/DataTables/js/datatables.min.js"></script>
+<script src="../static/vendor/DataTables/js/ellipsis.js"></script>
 
-<script>
-      $(function() {
+<script type="javascript">
+    $(input).click(function() {
+        console.log('here');
+        $.ajax({
+            url: '/create/wallet',
+            type: 'GET',
+            success: function(response) {
 
-      });
+                // get private and public keys from response
+                document.getElementById('public_key').innerHTML = response['public_key'];
+                document.getElementById('private_key').innerHTML = response['private_key'];
 
+                // display the warning
+                document.getElementById('warning').style.display = 'block;';
+            },
+            error: function(err) {
+                console.log(err);
+            }
+        });
+    });
+
+    $(document).ready(function() {
+        document.write("Ready.");
+    });
 </script>
 
 </body>
