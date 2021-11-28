@@ -16,19 +16,19 @@
     <div class="container">
         <a href="#" class="navbar-brand">Blockchain Client</a>
 
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a href="/" class="nav-link">Wallet Generator</a>
-                </li>
-                <li class="nav-item active">
-                    <a href="/transaction/create" class="nav-link">Make Transaction</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/transaction/viewAll" class="nav-link">View Transactions</a>
-                </li>
-            </ul>
-        </div>
+         <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a href="/" class="nav-link">Wallet Generator</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/transaction/create" class="nav-link">Send Coins</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/transaction/history" class="nav-link">Trade History</a>
+                    </li>
+                </ul>
+            </div>
     </div>
 </nav>
 
@@ -52,7 +52,7 @@
                 <input type="text" id="sender_public_key" name="sender_public_key" class="form-control"/>
             </div>
         </div>
-         <br>
+        <br>
         <div class="row">
             <label for="sender_private_key" class="col-sm-3">Sender Private Key:</label>
             <div class="col-sm-9">
@@ -66,7 +66,7 @@
                 <input type="text" id="receiver_public_key" name="receiver_public_key" class="form-control"/>
             </div>
         </div>
-         <br>
+        <br>
         <div class="row">
             <label for="amount" class="col-sm-3">Amount:</label>
             <div class="col-sm-9">
@@ -76,7 +76,8 @@
         <br>
         <div class="row">
             <div class="col-lg-12 text-center">
-                <input id='generateTransaction' type="button" class="btn btn-primary btn-lg" value="Generate Transaction">
+                <input id='generateTransaction' type="button" class="btn btn-primary btn-lg"
+                       value="Generate Transaction">
             </div>
         </div>
 
@@ -89,14 +90,23 @@
 <script src="/static/vendor/DataTables/js/ellipsis.js"></script>
 
 <script>
-            $(function() {
+    $(function() {
+        $('#generateTransaction').click(function() {
 
-
+            $.ajax({
+                url: '/transaction/generate',
+                type: 'POST',
+                success: function(response) {
+{#                        document.getElementById("public_key").innerHTML = response['public_key'];#}
+{#                        document.getElementById("private_key").innerHTML = response['private_key'];#}
+{#                        document.getElementById("warning").style.display = "block";#}
+                },
+                error: function(error) {
+                    console.log(error);
+                }
             });
-
-
-
-
+        });
+    });
 
 
 </script>
