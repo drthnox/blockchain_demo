@@ -25,12 +25,12 @@ def index():
 
 @app.route("/transaction/create")
 def create_transaction():
-    return render_template('../../blockchain_client/templates/create_transaction.html')
+    return render_template('create_transaction.html')
 
 
 @app.route("/transaction/viewAll")
 def view_transactions():
-    return render_template('../../blockchain_client/templates/view_transactions.html')
+    return render_template('view_transactions.html')
 
 
 @app.route("/wallet/create")
