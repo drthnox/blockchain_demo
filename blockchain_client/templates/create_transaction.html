@@ -12,56 +12,83 @@
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
-        <div class="container">
-            <a href="#" class="navbar-brand">Blockchain Client</a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container">
+        <a href="#" class="navbar-brand">Blockchain Client</a>
 
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a href="/" class="nav-link">Wallet Generator</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a href="/transaction/create" class="nav-link">Make Transaction</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/transaction/viewAll" class="nav-link">View Transactions</a>
-                    </li>
-                </ul>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">Wallet Generator</a>
+                </li>
+                <li class="nav-item active">
+                    <a href="/transaction/create" class="nav-link">Make Transaction</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/transaction/viewAll" class="nav-link">View Transactions</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <div class="card-body">
+                <h4 class="card-title">Send Coins</h4>
+                <p class="card-text">Enter transaction details and click 'Generate Transaction' button to generate your
+                    transaction</p>
             </div>
         </div>
-    </nav>
+    </div>
+</div>
 
-     <div class="container">
+<div class="container alert alert-secondary">
+    <form id="transaction_form">
+        <div class="row">
+            <label for="sender_public_key" class="col-sm-3">Sender Public Key (Address):</label>
+            <div class="col-sm-9">
+                <input type="text" id="sender_public_key" name="sender_public_key" class="form-control"/>
+            </div>
+        </div>
+         <br>
+        <div class="row">
+            <label for="sender_private_key" class="col-sm-3">Sender Private Key:</label>
+            <div class="col-sm-9">
+                <input type="text" id="sender_private_key" name="sender_private_key" class="form-control"/>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <label for="receiver_public_key" class="col-sm-3">Receiver Public Key (Address):</label>
+            <div class="col-sm-9">
+                <input type="text" id="receiver_public_key" name="receiver_public_key" class="form-control"/>
+            </div>
+        </div>
+         <br>
+        <div class="row">
+            <label for="amount" class="col-sm-3">Amount:</label>
+            <div class="col-sm-9">
+                <input type="text" id="amount" name="amount" class="form-control"/>
+            </div>
+        </div>
+        <br>
         <div class="row">
             <div class="col-lg-12 text-center">
-                <div class="card-body">
-                    <h4 class="card-title">Send Coins</h4>
-                    <p class="card-text">Enter transaction details and click 'Generate Transaction' button to generate your transaction</p>
-                </div>
+                <input id='generateTransaction' type="button" class="btn btn-primary btn-lg" value="Generate Transaction">
             </div>
         </div>
-    </div>
 
-    <div class="container alert alert-secondary">
-        <form id="transaction_form">
-            <div class="row">
-                <label for="sender_address" class="col-sm-2">Sender Address:</label>
-                <div class="col-sm-10">
-                    <input type="text" id="sender_address" name="sender_address" class="form-control" />
-                </div>
-            </div>
+    </form>
+</div>
 
-        </form>
-    </div>
-    and here
+<script src="/static/vendor/jquery/jquery-3.6.0.min.js"></script>
+<script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/static/vendor/DataTables/js/datatables.min.js"></script>
+<script src="/static/vendor/DataTables/js/ellipsis.js"></script>
 
-    <script src="/static/vendor/jquery/jquery-3.6.0.min.js"></script>
-    <script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/static/vendor/DataTables/js/datatables.min.js"></script>
-    <script src="/static/vendor/DataTables/js/ellipsis.js"></script>
-
-    <script>
+<script>
             $(function() {
 
 
@@ -70,7 +97,9 @@
 
 
 
-    </script>
+
+
+</script>
 
 </body>
 </html>
