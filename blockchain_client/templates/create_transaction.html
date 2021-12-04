@@ -18,10 +18,10 @@
 
          <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item active">
+                    <li class="nav-item">
                         <a href="/" class="nav-link">Wallet Generator</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item active">
                         <a href="/transaction/create" class="nav-link">Send Coins</a>
                     </li>
                     <li class="nav-item">
@@ -96,10 +96,10 @@
             $.ajax({
                 url: '/transaction/generate',
                 type: 'POST',
+                dataType : 'json',
+                data: $('#transaction-form').serialize(),
                 success: function(response) {
-{#                        document.getElementById("public_key").innerHTML = response['public_key'];#}
-{#                        document.getElementById("private_key").innerHTML = response['private_key'];#}
-{#                        document.getElementById("warning").style.display = "block";#}
+                    console.log(response);
                 },
                 error: function(error) {
                     console.log(error);
