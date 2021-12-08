@@ -1,11 +1,14 @@
 from flask import Flask, render_template, request
-
 import Crypto.PublicKey
 from Crypto import Random
 from Crypto.PublicKey import RSA
 from flask import jsonify
 import binascii
 from collections import OrderedDict
+from werkzeug.exceptions import HTTPException
+
+
+# debug = True  # global variable setting the debug config
 
 
 class Transaction:
@@ -17,27 +20,41 @@ class Transaction:
 
     def to_dict(self):
         return OrderedDict({
-                'sender_public_key': self.sender_public_key,
-                'sender_private_key': self.sender_private_key,
-                'receiver_public_key': self.receiver_public_key,
-                'amount': self.amount
+            'sender_public_key': self.sender_public_key,
+            'sender_private_key': self.sender_private_key,
+            'receiver_public_key': self.receiver_public_key,
+            'amount': self.amount
         })
 
 
 app = Flask(__name__)
 
 
-@app.route("/")
+@app.route('/')
 def index():
     return render_template('index.html')  # Flask will look inside templates/
 
 
-@app.route("/transaction/create")
+@app.errorhandler(Exception)
+def handle_exception(e):
+    if isinstance(e, HTTPException):
+        return e
+
+    res = {'code': 500,
+           'errorType': 'Internal Server Error',
+           'errorMessage': "Something went really wrong!"}
+    if debug:
+        res['errorMessage'] = e.message if hasattr(e, 'message') else f'{e}'
+
+    return jsonify(res), 500
+
+
+@app.route('/transaction/create')
 def create_transaction():
     return render_template('create_transaction.html')
 
 
-@app.route("/transaction/generate", methods=['POST'])
+@app.route('/transaction/generate', methods=['POST'])
 def generate_transaction():
     sender_public_key = request.form['sender_public_key']
     sender_private_key = request.form['sender_private_key']
@@ -48,15 +65,16 @@ def generate_transaction():
         'transaction': transaction.to_dict(),
         'signature': 'tbd'
     }
+    print('---> ', jsonify(response))
     return jsonify(response), 200
 
 
-@app.route("/transaction/history")
+@app.route('/transaction/history')
 def view_transactions():
     return ''
 
 
-@app.route("/wallet/create")
+@app.route('/wallet/create')
 def create_wallet():
     random_generator = Random.new().read
     private_key = Crypto.PublicKey.RSA.generate(1024, random_generator)
