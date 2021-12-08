@@ -1,3 +1,4 @@
+from Crypto.Hash import SHA, SHA256
 from flask import Flask, render_template, request
 import Crypto.PublicKey
 from Crypto import Random
@@ -6,7 +7,7 @@ from flask import jsonify
 import binascii
 from collections import OrderedDict
 from werkzeug.exceptions import HTTPException
-
+from Crypto.Signature import PKCS1_v1_5
 
 # debug = True  # global variable setting the debug config
 
@@ -26,6 +27,14 @@ class Transaction:
             'amount': self.amount
         })
 
+    def sign(self):
+        key = binascii.unhexlify(self.sender_private_key)
+        private_key = RSA.importKey(key)
+        signer = PKCS1_v1_5.new(private_key)
+        encoded_transaction = str(self.to_dict()).encode('utf8')
+        signed_hash = signer.sign(SHA256.new(encoded_transaction))
+        signature = binascii.hexlify(signed_hash).decode('ascii')
+        return signature
 
 app = Flask(__name__)
 
@@ -63,7 +72,7 @@ def generate_transaction():
     transaction = Transaction(sender_public_key, sender_private_key, receiver_public_key, amount)
     response = {
         'transaction': transaction.to_dict(),
-        'signature': 'tbd'
+        'signature': transaction.sign()
     }
     print('---> ', jsonify(response))
     return jsonify(response), 200
