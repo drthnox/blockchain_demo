@@ -9,7 +9,7 @@ from collections import OrderedDict
 from werkzeug.exceptions import HTTPException
 from Crypto.Signature import PKCS1_v1_5
 
-# debug = True  # global variable setting the debug config
+debug = True  # global variable setting the debug config
 
 
 class Transaction:
@@ -74,7 +74,10 @@ def generate_transaction():
         'transaction': transaction.to_dict(),
         'signature': transaction.sign()
     }
-    print('---> ', jsonify(response))
+    print('sender_public_key = ', transaction.sender_public_key)
+    print('sender_private_key = ', transaction.sender_private_key)
+    print('receiver_public_key = ', transaction.receiver_public_key)
+    print('amount = ', transaction.amount)
     return jsonify(response), 200
 
 
