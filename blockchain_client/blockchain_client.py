@@ -13,7 +13,7 @@ debug = True  # global variable setting the debug config
 
 
 class Transaction:
-    def __init__(self, sender_public_key, sender_private_key, receiver_public_key, amount):
+    def __init__(self, sender_public_key = '', sender_private_key = '', receiver_public_key = '', amount = '0.0'):
         self.sender_public_key = sender_public_key
         self.sender_private_key = sender_private_key
         self.receiver_public_key = receiver_public_key
@@ -35,6 +35,7 @@ class Transaction:
         signed_hash = signer.sign(SHA256.new(encoded_transaction))
         signature = binascii.hexlify(signed_hash).decode('ascii')
         return signature
+
 
 app = Flask(__name__)
 
@@ -60,11 +61,13 @@ def handle_exception(e):
 
 @app.route('/transaction/create')
 def create_transaction():
+    print("create_transaction")
     return render_template('create_transaction.html')
 
 
 @app.route('/transaction/generate', methods=['POST'])
 def generate_transaction():
+    print("generate_transaction")
     sender_public_key = request.form['sender_public_key']
     sender_private_key = request.form['sender_private_key']
     receiver_public_key = request.form['receiver_public_key']
@@ -88,6 +91,7 @@ def view_transactions():
 
 @app.route('/wallet/create')
 def create_wallet():
+    print("create_wallet")
     random_generator = Random.new().read
     private_key = Crypto.PublicKey.RSA.generate(1024, random_generator)
     public_key = private_key.public_key()
