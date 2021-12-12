@@ -1,5 +1,9 @@
+import binascii
 from collections import OrderedDict
 
+from Crypto.Hash import SHA256
+from Crypto.PublicKey import RSA
+from Crypto.Signature import PKCS1_v1_5
 from flask import Flask, render_template, jsonify, request
 from time import time
 from flask_cors import CORS
@@ -25,16 +29,25 @@ class Blockchain:
         # append to the chain
         self.chain.append(block)
 
+    def verify_transaction_signature(self, sender_public_key, signature, transaction):
+        public_key = RSA.importKey(binascii.unhexlify(sender_public_key))
+        verifier = PKCS1_v1_5.new(public_key)
+        hash = SHA256.new(str(transaction).encode('utf-8'))
+        try:
+            verifier.verify(hash, binascii.unhexlify(signature))
+            return True
+        except ValueError:
+            return False
+
     def submit_transaction(self, sender_public_key, receiver_public_key, signature, amount):
         # TODO reward the miner
-        # TODO Validate signature
         transaction = OrderedDict({
             'sender_public_key': sender_public_key,
             'receiver_public_key': receiver_public_key,
             'signature': signature,
             'amount': amount
         })
-        signature_verification = True
+        signature_verification = self.verify_transaction_signature(sender_public_key, signature, transaction)
         if signature_verification:
             self.transactions.append(transaction)
             return len(self.chain) + 1

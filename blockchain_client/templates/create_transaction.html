@@ -217,7 +217,7 @@
                 url: document.getElementById('node_url').value + '/transaction/new',
                 type: 'POST',
                 dataType : 'json',
-                header: {'Access-Control-Allow-Origin', '*'},
+                headers: {'Access-Control-Allow-Origin': '*'},
                 data: $('#confirmation_transaction_form').serialize(),
                 success: function(response) {
                     $('#sender_public_key').val('');
