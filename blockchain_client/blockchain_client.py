@@ -13,7 +13,7 @@ debug = True  # global variable setting the debug config
 
 
 class Transaction:
-    def __init__(self, sender_public_key = '', sender_private_key = '', receiver_public_key = '', amount = '0.0'):
+    def __init__(self, sender_public_key='', sender_private_key='', receiver_public_key='', amount='0.0'):
         self.sender_public_key = sender_public_key
         self.sender_private_key = sender_private_key
         self.receiver_public_key = receiver_public_key
