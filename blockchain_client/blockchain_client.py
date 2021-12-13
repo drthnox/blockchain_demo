@@ -93,8 +93,13 @@ def view_transactions():
 def create_wallet():
     print("create_wallet")
     random_generator = Random.new().read
+
+    # generate the private key for the wallet
     private_key = Crypto.PublicKey.RSA.generate(1024, random_generator)
+
+    # and the public key
     public_key = private_key.public_key()
+
     response = {
         'private_key': binascii.hexlify(private_key.exportKey(format('DER'))).decode('ascii'),
         'public_key': binascii.hexlify(public_key.exportKey(format('DER'))).decode('ascii')

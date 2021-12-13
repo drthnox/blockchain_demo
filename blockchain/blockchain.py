@@ -30,8 +30,13 @@ class Blockchain:
         self.chain.append(block)
 
     def verify_transaction_signature(self, sender_public_key, signature, transaction):
+        # extract the unhexified public key
         public_key = RSA.importKey(binascii.unhexlify(sender_public_key))
+
+        # create a new verifier from the public key
         verifier = PKCS1_v1_5.new(public_key)
+
+        # get the transaction hashed value
         hash = SHA256.new(str(transaction).encode('utf-8'))
         try:
             verifier.verify(hash, binascii.unhexlify(signature))
@@ -44,15 +49,14 @@ class Blockchain:
         transaction = OrderedDict({
             'sender_public_key': sender_public_key,
             'receiver_public_key': receiver_public_key,
-            'signature': signature,
             'amount': amount
         })
         signature_verification = self.verify_transaction_signature(sender_public_key, signature, transaction)
         if signature_verification:
             self.transactions.append(transaction)
             return len(self.chain) + 1
-        else:
-            return False
+
+        return False
 
 
 # instantiate the blockchain
@@ -80,15 +84,15 @@ def new_transaction():
         values['transaction_signature'],
         values['confirmation_amount']
     )
-    if transaction_results == False:
+    return_code = 201
+    if not transaction_results:
         response = {'message': 'Invalid transaction'}
-        return jsonify(response), 406
+        return_code = 406
     else:
         response = {'message': 'Transaction will be added to the block ' + str(transaction_results)}
-        return jsonify(response), 201
+        return_code = 201
 
-    response = {'message': 'ok'}
-    return jsonify(response), 201
+    return jsonify(response), return_code
 
 
 if __name__ == '__main__':
