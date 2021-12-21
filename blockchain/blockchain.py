@@ -44,17 +44,24 @@ class Blockchain:
         except ValueError:
             return False
 
+    def sender_is_a_miner(self, sender_public_key):
+        return True
+
     def submit_transaction(self, sender_public_key, receiver_public_key, signature, amount):
-        # TODO reward the miner
         transaction = OrderedDict({
             'sender_public_key': sender_public_key,
             'receiver_public_key': receiver_public_key,
             'amount': amount
         })
-        signature_verification = self.verify_transaction_signature(sender_public_key, signature, transaction)
-        if signature_verification:
+
+        if self.sender_is_a_miner(sender_public_key):
             self.transactions.append(transaction)
             return len(self.chain) + 1
+        else:
+            signature_verification = self.verify_transaction_signature(sender_public_key, signature, transaction)
+            if signature_verification:
+                self.transactions.append(transaction)
+                return len(self.chain) + 1
 
         return False
 
@@ -77,14 +84,23 @@ def new_transaction():
     print("new_transaction")
     values = request.form
 
-    # TODO: Check the required fields
+    # Check the required fields
+    required_parameters = {
+        'confirmation_sender_public_key',
+        'confirmation_receiver_public_key',
+        'transaction_signature',
+        'confirmation_amount'
+    }
+    if not all(param in values for param in required_parameters):
+        return 'Missing Values', 400
+
     transaction_results = blockchain.submit_transaction(
         values['confirmation_sender_public_key'],
         values['confirmation_receiver_public_key'],
         values['transaction_signature'],
         values['confirmation_amount']
     )
-    return_code = 201
+    return_code = 406
     if not transaction_results:
         response = {'message': 'Invalid transaction'}
         return_code = 406
@@ -104,4 +120,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
     port = args.port
 
-    app.run(host='127.0.01', port=port, debug=True)
+    app.run(host='127.0.0.1', port=port, debug=True)

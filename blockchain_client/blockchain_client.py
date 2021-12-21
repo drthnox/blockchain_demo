@@ -115,4 +115,4 @@ if __name__ == '__main__':
                         type=int, help="Port to listen to")
     args = parser.parse_args()
     port = args.port
-    app.run(host='127.0.01', port=port, debug=True)
+    app.run(host='127.0.0.1', port=port, debug=True)
