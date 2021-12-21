@@ -70,7 +70,7 @@ class Blockchain:
 blockchain = Blockchain()
 
 # instantiate a node
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static")
 CORS(app)
 
 

@@ -37,8 +37,7 @@ class Transaction:
         return signature
 
 
-app = Flask(__name__)
-
+app = Flask(__name__, static_folder="static")
 
 @app.route('/')
 def index():
