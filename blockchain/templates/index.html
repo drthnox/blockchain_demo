@@ -4,86 +4,115 @@
     <meta charset="UTF-8">
     <title>Blockchain Frontend</title>
 
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='vendor/bootstrap/css/bootstrap.min.css') }}">
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='vendor/DataTables/css/datatables.min.css') }}">
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='vendor/fontawesome/all.min.css') }}">
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/custom.css') }}">
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static',filename='vendor/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static',filename='vendor/DataTables/css/datatables.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='vendor/fontawesome/all.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/custom.css') }}">
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container">
-            <a href="#" class="navbar-brand">Blockchain Frontend</a>
-
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item active">
-                        <a href="/" class="nav-link">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/make/transaction" class="nav-link">Configure</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
     <div class="container">
-        <div class="row">
-            <div class="col-lg-12 text-center">
-                <div class="card-body">
-                    <h4 class="card-title">Transactions to be added to the next block</h4>
-                    <button type="submit" id="refresh_transactions" class="btn btn-primary">
-                        <i class="fa fa-refresh"></i>
-                    </button>
+        <a href="#" class="navbar-brand">Blockchain Frontend</a>
 
-                </div>
-            </div>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a href="/" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/make/transaction" class="nav-link">Configure</a>
+                </li>
+            </ul>
         </div>
     </div>
+</nav>
 
-    <div class="container">
-        <table id="unmined_transactions_table" class="table table-bordered" cellspacing="0" width="100%">
-
-        </table>
-
+<div class="container">
+    <div class="row">
         <div class="col-lg-12 text-center">
-            <input type="button" id="mine_button" class="btn btn-primary btn-lg" value="Mine">
-        </div>
-    </div>
+            <div class="card-body">
+                <h4 class="card-title">Transactions to be added to the next block</h4>
+                <button type="submit" id="refresh_transactions" class="btn btn-primary">
+                    <i class="fa fa-refresh"></i>
+                </button>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12 text-center">
-                <div class="card-body">
-                    <h4 class="card-title">Transactions on the blockchain</h4>
-                    <button type="submit" id="refresh_blockchain" class="btn btn-primary">
-                        <i class="fa fa-refresh"></i>
-                    </button>
-
-                </div>
             </div>
         </div>
     </div>
+</div>
 
-    <div class="container">
-        <table id="transactions_table" class="table table-bordered" cellspacing="0" width="100%">
+<div class="container">
+    <table id="unmined_transactions_table" class="table table-bordered" cellspacing="0" width="100%">
 
-        </table>
+    </table>
+
+    <div class="col-lg-12 text-center">
+        <input type="button" id="mine_button" class="btn btn-primary btn-lg" value="Mine">
     </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <div class="card-body">
+                <h4 class="card-title">Transactions on the blockchain</h4>
+                <button type="submit" id="refresh_blockchain" class="btn btn-primary">
+                    <i class="fa fa-refresh"></i>
+                </button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <table id="transactions_table" class="table table-bordered" border-spacing="0" width="100%">
+
+    </table>
+</div>
 
 
-<script src= "{{ url_for('static',filename='vendor/jquery/jquery-3.6.0.min.js') }}"></script>
-<script src= "{{ url_for('static',filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-<script src= "{{ url_for('static',filename='vendor/DataTables/js/datatables.min.js') }}"></script>
-<script src= "{{ url_for('static',filename='vendor/DataTables/js/ellipsis.js') }}"></script>
+<script src="{{ url_for('static',filename='vendor/jquery/jquery-3.6.0.min.js') }}"></script>
+<script src="{{ url_for('static',filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ url_for('static',filename='vendor/DataTables/js/datatables.min.js') }}"></script>
+<script src="{{ url_for('static',filename='vendor/DataTables/js/ellipsis.js') }}"></script>
 
 <script>
         $(function() {
-
-
+            $.ajax({
+                url: '/transaction/fetchAll',
+                type: 'GET',
+                success: function(response) {
+                    let transactions = [];
+                    let count = 1;
+                    for(i=0; i<response['transactions'].length; i++) {
+                        let transaction = [
+                            count,
+                            response['transactions'][i]['sender_public_key'],
+                            response['transactions'][i]['receiver_public_key'],
+                            response['transactions'][i]['amount']
+                        ];
+                        transactions.push(transaction);
+                        count += 1;
+                    }
+                    $('#unmined_transactions_table').dataTable({
+                        data : transactions,
+                        columns: [
+                            {title: '#'},
+                            {title: 'Sender Public Key'},
+                            {title: 'Receiver Public Key'},
+                            {title: 'Amount'},
+                        ]
+                    });
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
         });
-
 
 </script>
 

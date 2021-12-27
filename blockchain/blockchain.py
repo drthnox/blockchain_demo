@@ -79,6 +79,13 @@ def index():
     return render_template('index.html')  # Flask will look inside templates/
 
 
+@app.route('/transaction/fetchAll', methods=['GET'])
+def fetch_transactions():
+    transactions = blockchain.transactions
+    response = {'transactions': transactions}
+    return jsonify(response), 200
+
+
 @app.route('/transaction/new', methods=['POST'])
 def new_transaction():
     print("new_transaction")
