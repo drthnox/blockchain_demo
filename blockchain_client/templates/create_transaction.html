@@ -213,6 +213,7 @@
 
         $('#button_confirm_transaction').click(function() {
             console.log('button_confirm_transaction');
+            var debug = 1
             $.ajax({
                 url: document.getElementById('node_url').value + '/transaction/new',
                 type: 'POST',
@@ -220,10 +221,12 @@
                 headers: {'Access-Control-Allow-Origin': '*'},
                 data: $('#confirmation_transaction_form').serialize(),
                 success: function(response) {
-                    $('#sender_public_key').val('');
-                    $('#sender_private_key').val('');
-                    $('#receiver_public_key').val('');
-                    $('#amount').val('');
+                    if(debug == 0) {
+                        $('#sender_public_key').val('');
+                        $('#sender_private_key').val('');
+                        $('#receiver_public_key').val('');
+                        $('#amount').val('');
+                    }
                     $('#basic_modal').modal('hide');
                     $('#success_transaction_modal').modal('show');
                 },

@@ -1,4 +1,5 @@
 import binascii
+import uuid
 from collections import OrderedDict
 
 from Crypto.Hash import SHA256
@@ -11,12 +12,14 @@ from flask_cors import CORS
 MINING_SENDER = "the-blockchain"
 MINING_REWARD = 1
 
+
 class Blockchain:
     def __init__(self):
         self.transactions = []  # list of transactions
         self.chain = []  # list of blocks
         # create the genesis block
         self.create_block(0, '00')
+        self.node_id = str(uuid.uuid4()).replace('-', '')
 
     def create_block(self, nonce, prev_hash):
         block = {
@@ -51,6 +54,7 @@ class Blockchain:
         return True
 
     def submit_transaction(self, sender_public_key, receiver_public_key, signature, amount):
+        print("submit_transaction ", amount)
         transaction = OrderedDict({
             'sender_public_key': sender_public_key,
             'receiver_public_key': receiver_public_key,
@@ -76,6 +80,7 @@ class Blockchain:
         print("hash")
         return 'abc'
 
+
 # instantiate the blockchain
 blockchain = Blockchain()
 
@@ -88,19 +93,21 @@ CORS(app)
 def index():
     return render_template('index.html')  # Flask will look inside templates/
 
+
 @app.route('/mine', methods=['GET'])
 def mine():
     print("mine")
     # Execute PoW algorithm
     nonce = blockchain.proof_of_work()
+    print("nonce ", nonce)
     # Reward work by submitting a transaction
-    sender = sender_public_key = MINING_SENDER
-    blockchain.submit_transaction(sender_public_key=sender,
+    blockchain.submit_transaction(sender_public_key=MINING_SENDER,
                                   receiver_public_key=blockchain.node_id,
                                   signature='',
                                   amount=MINING_REWARD)
     last_block = blockchain.chain[-1]
     prev_hash = blockchain.hash(last_block)
+    print("prev_hash ", prev_hash)
     block = blockchain.create_block(nonce, prev_hash)
 
     response = {
@@ -111,6 +118,7 @@ def mine():
         'prev_hash': block['prev_hash'],
     }
     return jsonify(response), 200
+
 
 @app.route('/transaction/fetchAll', methods=['GET'])
 def fetch_transactions():

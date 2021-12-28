@@ -50,7 +50,7 @@
     </table>
 
     <div class="col-lg-12 text-center">
-        <input type="button" id="mine_button" class="btn btn-primary btn-lg" value="Mine">
+        <button id="mine_button" class="btn btn-primary btn-lg">Mine</button>
     </div>
 </div>
 
@@ -81,38 +81,55 @@
 <script src="{{ url_for('static',filename='vendor/DataTables/js/ellipsis.js') }}"></script>
 
 <script>
-        $(function() {
+    $(function() {
+        var debug = 0;
+        $.ajax({
+            url: '/transaction/fetchAll',
+            type: 'GET',
+            success: function(response) {
+                let transactions = [];
+                let count = 1;
+                for(i=0; i<response['transactions'].length; i++) {
+                    let transaction = [
+                        count,
+                        response['transactions'][i]['sender_public_key'],
+                        response['transactions'][i]['receiver_public_key'],
+                        response['transactions'][i]['amount']
+                    ];
+                    transactions.push(transaction);
+                    count += 1;
+                }
+                $('#unmined_transactions_table').dataTable({
+                    data : transactions,
+                    columns: [
+                        {title: '#'},
+                        {title: 'Sender Public Key'},
+                        {title: 'Receiver Public Key'},
+                        {title: 'Amount'},
+                    ]
+                });
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+
+        $('#mine_button').click(function() {
             $.ajax({
-                url: '/transaction/fetchAll',
+                url: '/mine',
                 type: 'GET',
                 success: function(response) {
-                    let transactions = [];
-                    let count = 1;
-                    for(i=0; i<response['transactions'].length; i++) {
-                        let transaction = [
-                            count,
-                            response['transactions'][i]['sender_public_key'],
-                            response['transactions'][i]['receiver_public_key'],
-                            response['transactions'][i]['amount']
-                        ];
-                        transactions.push(transaction);
-                        count += 1;
+                    // Refresh the page
+                    if(debug == 0) {
+                        window.location.reload();
                     }
-                    $('#unmined_transactions_table').dataTable({
-                        data : transactions,
-                        columns: [
-                            {title: '#'},
-                            {title: 'Sender Public Key'},
-                            {title: 'Receiver Public Key'},
-                            {title: 'Amount'},
-                        ]
-                    });
                 },
-                error: function(error) {
+               error: function(error) {
                     console.log(error);
                 }
             });
         });
+    });
 
 </script>
 
