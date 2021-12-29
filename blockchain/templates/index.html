@@ -82,7 +82,9 @@
 
 <script>
     $(function() {
+
         var debug = 0;
+
         $.ajax({
             url: '/transaction/fetchAll',
             type: 'GET',
@@ -106,7 +108,58 @@
                         {title: 'Sender Public Key'},
                         {title: 'Receiver Public Key'},
                         {title: 'Amount'},
-                    ]
+                    ],
+                    columnDefs: [{
+                        targets: [1,2,3],
+                        render: $.fn.dataTable.render.ellipsis(25)
+                    }]
+                });
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+
+        $.ajax({
+            url: '/chain',
+            type: 'GET',
+            success: function(response) {
+                let transactions = [];
+                let count = 1;
+
+                // iterate through the blocks
+                for(i=0; i<response['length']; i++) {
+
+                    // iterate through the transactions in each block
+                    for(j=0; j<response['chain'][i]['transactions'].length; j++) {
+
+                        let transaction = [
+                            count,
+                            response['chain'][i]['transactions'][j]['sender_public_key'],
+                            response['chain'][i]['transactions'][j]['receiver_public_key'],
+                            response['chain'][i]['transactions'][j]['amount'],
+                            response['chain'][i]['block_number'],
+                            response['chain'][i]['timestamp']
+                        ]
+
+                        transactions.push(transaction);
+                        count += 1;
+                    }
+                }
+                $('#transactions_table').dataTable({
+                    data : transactions,
+                    columns: [
+                        {title: '#'},
+                        {title: 'Sender Public Key'},
+                        {title: 'Receiver Public Key'},
+                        {title: 'Amount'},
+                        {title: 'Block'},
+                        {title: 'Timestamp'},
+                    ],
+                    columnDefs: [{
+                        targets: [1,2,3,4,5],
+                        render: $.fn.dataTable.render.ellipsis(25)
+                    }]
                 });
             },
             error: function(error) {

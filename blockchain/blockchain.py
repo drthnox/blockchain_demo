@@ -94,12 +94,19 @@ def index():
     return render_template('index.html')  # Flask will look inside templates/
 
 
+@app.route('/chain', methods=['GET'])
+def chain():
+    response = {
+        'chain': blockchain.chain,
+        'length': len(blockchain.chain)
+    }
+    return jsonify(response), 200
+
+
 @app.route('/mine', methods=['GET'])
 def mine():
-    print("mine")
     # Execute PoW algorithm
     nonce = blockchain.proof_of_work()
-    print("nonce ", nonce)
     # Reward work by submitting a transaction
     blockchain.submit_transaction(sender_public_key=MINING_SENDER,
                                   receiver_public_key=blockchain.node_id,
@@ -107,7 +114,6 @@ def mine():
                                   amount=MINING_REWARD)
     last_block = blockchain.chain[-1]
     prev_hash = blockchain.hash(last_block)
-    print("prev_hash ", prev_hash)
     block = blockchain.create_block(nonce, prev_hash)
 
     response = {
