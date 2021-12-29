@@ -132,6 +132,9 @@
 
                     // iterate through the transactions in each block
                     for(j=0; j<response['chain'][i]['transactions'].length; j++) {
+                        let options = {  year: "numeric", month: "short",  day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit"  };
+                        let date = new Date(response["chain"][i]["timestamp"] * 1000);
+                        formattedTimestamp = date.toLocaleTimeString('en-US', options);
 
                         let transaction = [
                             count,
@@ -139,7 +142,7 @@
                             response['chain'][i]['transactions'][j]['receiver_public_key'],
                             response['chain'][i]['transactions'][j]['amount'],
                             response['chain'][i]['block_number'],
-                            response['chain'][i]['timestamp']
+                            formattedTimestamp
                         ]
 
                         transactions.push(transaction);
