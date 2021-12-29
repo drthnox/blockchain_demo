@@ -1,4 +1,6 @@
 import binascii
+import hashlib
+import json
 import uuid
 from collections import OrderedDict
 
@@ -77,8 +79,12 @@ class Blockchain:
         return 12345
 
     def hash(self, block):
-        print("hash")
-        return 'abc'
+        # Must ensure that the dictionary is ORDERED,
+        # otherwise will result in inconsistent hashes
+        block_string = json.dumps(block, sort_keys=True)
+        hasher = hashlib.new('sha256')
+        hasher.update(block_string.encode('utf8'))
+        return hasher.hexdigest()
 
 
 # instantiate the blockchain
