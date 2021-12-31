@@ -4,6 +4,7 @@ import json
 import uuid
 from collections import OrderedDict
 
+import requests
 from Crypto.Hash import SHA256
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
@@ -20,9 +21,10 @@ class Blockchain:
     def __init__(self):
         self.transactions = []  # list of transactions
         self.chain = []  # list of blocks
+        self.node_id = str(uuid.uuid4()).replace('-', '')
+        self.nodes = set()
         # create the genesis block
         self.create_block(0, '00')
-        self.node_id = str(uuid.uuid4()).replace('-', '')
 
     def create_block(self, nonce, prev_hash):
         block = {
@@ -47,9 +49,9 @@ class Blockchain:
         verifier = PKCS1_v1_5.new(public_key)
 
         # get the transaction hashed value
-        hash = SHA256.new(str(transaction).encode('utf-8'))
+        _hash = SHA256.new(str(transaction).encode('utf-8'))
         try:
-            verifier.verify(hash, binascii.unhexlify(signature))
+            verifier.verify(_hash, binascii.unhexlify(signature))
             return True
         except ValueError:
             return False
@@ -77,7 +79,8 @@ class Blockchain:
 
         return False
 
-    def hashify(self, string_data):
+    @staticmethod
+    def hashify(string_data):
         hasher = hashlib.new('sha256')
         hasher.update(string_data.encode('utf8'))
         return hasher.hexdigest()
@@ -102,6 +105,49 @@ class Blockchain:
             nonce += 1
         print("PoW nonce: ", nonce)
         return nonce
+
+    def resolve_conflicts(self):
+        neighbours = self.nodes
+        max_length = len(self.chain)
+        new_chain = None
+
+        # Iterate through the neighbouring nodes
+        for node in neighbours:
+            response = requests.get("http://" + node + "/chain")
+            if response.status_code == 200:
+                json = response.json()
+                length = json['length']
+                chain = json['chain']
+                if length > max_length and self.valid_chain(chain):
+                    # Replace our chain with the longer chain
+                    max_length = length
+                    new_chain = chain
+        if new_chain is not None:
+            self.chain = new_chain
+            return True
+
+        return False
+
+    def valid_chain(self, _chain):
+        last_block = self.chain[0]
+        current_index = 1
+        while current_index < len(_chain):
+            block = _chain[current_index]
+            last_hash = self.hash_block(last_block)
+            if block['prev_hash'] != last_hash:
+                return False
+            # Get all transactions except last one, which will be the mining block
+            transactions = block['transactions'][:-1]
+            transaction_elements = ['sender_public_key', 'receiver_public_key', 'amount']
+            transactions = [OrderedDict((k, transaction[k]) for k in transaction_elements) for transaction in
+                            transactions]
+            prev_hash = block['prev_hash']
+            nonce = block['nonce']
+            if not self.valid_proof(transactions, prev_hash, nonce):
+                return False
+            last_block = block
+            current_index = current_index + 1
+        return True
 
 
 # instantiate the blockchain
