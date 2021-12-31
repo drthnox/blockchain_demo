@@ -1,6 +1,7 @@
 import binascii
 import hashlib
 import json
+import urllib.parse
 import uuid
 from collections import OrderedDict
 
@@ -149,6 +150,15 @@ class Blockchain:
             current_index = current_index + 1
         return True
 
+    def register_node(self, node_url):
+        # check that URL is valid
+        parsed_url = urllib.parse.urlparse(node_url)
+        if parsed_url.netloc:
+            self.nodes.add(parsed_url.netloc)
+        elif parsed_url.path:
+            self.nodes.add(parsed_url.path)
+        else:
+            raise ValueError('Invalid URL')
 
 # instantiate the blockchain
 blockchain = Blockchain()
@@ -161,6 +171,10 @@ CORS(app)
 @app.route("/")
 def index():
     return render_template('index.html')  # Flask will look inside templates/
+
+@app.route("/configure")
+def configure():
+    return render_template('configure.html')  # Flask will look inside templates/
 
 
 @app.route('/chain', methods=['GET'])
@@ -199,6 +213,27 @@ def mine():
 def fetch_transactions():
     transactions = blockchain.transactions
     response = {'transactions': transactions}
+    return jsonify(response), 200
+
+
+@app.route('/nodes/get', methods=['GET'])
+def get_nodes():
+    nodes = blockchain.nodes
+    response = {'nodes': nodes}
+    return jsonify(response), 200
+
+
+@app.route('/node/register', methods=['POST'])
+def register_node():
+    values = request.form
+    # expected: 127.0.0.1:5002, 127.0.0.1:5003, 127.0.0.1:5004, ...
+    nodes = values.get('nodes').replace(' ', '').split(',')
+    if nodes is None:
+        return 'Error: no nodes defined in request', 400
+    for node in nodes:
+        blockchain.register_node(node)
+    response = {'message': 'Nodes have been added successfully',
+                'total_nodes': [node for node in blockchain.nodes]}
     return jsonify(response), 200
 
 

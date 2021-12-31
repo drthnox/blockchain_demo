@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blockchain Frontend</title>
+
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static',filename='vendor/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static',filename='vendor/DataTables/css/datatables.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='vendor/fontawesome/all.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/custom.css') }}">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+        <a href="#" class="navbar-brand">Blockchain Frontend</a>
+
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item active">
+                    <a href="/configure" class="nav-link">Configure</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+
+
+<script src="{{ url_for('static',filename='vendor/jquery/jquery-3.6.0.min.js') }}"></script>
+<script src="{{ url_for('static',filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ url_for('static',filename='vendor/DataTables/js/datatables.min.js') }}"></script>
+<script src="{{ url_for('static',filename='vendor/DataTables/js/ellipsis.js') }}"></script>
+
+<script>
+    $(function() {
+
+    });
+
+</script>
+
+</body>
+</html>
