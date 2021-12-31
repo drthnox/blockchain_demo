@@ -13,6 +13,7 @@ from flask_cors import CORS
 
 MINING_SENDER = "the-blockchain"
 MINING_REWARD = 1
+MINING_DIFFICULTY = 2
 
 
 class Blockchain:
@@ -37,7 +38,8 @@ class Blockchain:
         self.chain.append(block)
         return block
 
-    def verify_transaction_signature(self, sender_public_key, signature, transaction):
+    @staticmethod
+    def verify_transaction_signature(sender_public_key, signature, transaction):
         # extract the unhexified public key
         public_key = RSA.importKey(binascii.unhexlify(sender_public_key))
 
@@ -52,7 +54,8 @@ class Blockchain:
         except ValueError:
             return False
 
-    def sender_is_a_miner(self, sender_public_key):
+    @staticmethod
+    def sender_is_a_miner(sender_public_key):
         return True
 
     def submit_transaction(self, sender_public_key, receiver_public_key, signature, amount):
@@ -74,17 +77,31 @@ class Blockchain:
 
         return False
 
-    def proof_of_work(self):
-        print("proof_of_work")
-        return 12345
+    def hashify(self, string_data):
+        hasher = hashlib.new('sha256')
+        hasher.update(string_data.encode('utf8'))
+        return hasher.hexdigest()
 
-    def hash(self, block):
+    def hash_block(self, block):
         # Must ensure that the dictionary is ORDERED,
         # otherwise will result in inconsistent hashes
         block_string = json.dumps(block, sort_keys=True)
-        hasher = hashlib.new('sha256')
-        hasher.update(block_string.encode('utf8'))
-        return hasher.hexdigest()
+        return self.hashify(block_string)
+
+    def valid_proof(self, transactions, last_hash, nonce, difficulty=MINING_DIFFICULTY):
+        guess = str(transactions) + str(last_hash) + str(nonce)
+        guess_hash = self.hashify(guess)
+        return guess_hash[:difficulty] == '0' * difficulty
+
+    def proof_of_work(self):
+        # Need to find the nonce
+        nonce = 0
+        last_block = self.chain[-1]
+        last_hash = self.hashify(str(last_block))
+        while (self.valid_proof(self.transactions, last_hash, nonce)) is False:
+            nonce += 1
+        print("PoW nonce: ", nonce)
+        return nonce
 
 
 # instantiate the blockchain
@@ -119,7 +136,7 @@ def mine():
                                   signature='',
                                   amount=MINING_REWARD)
     last_block = blockchain.chain[-1]
-    prev_hash = blockchain.hash(last_block)
+    prev_hash = blockchain.hash_block(last_block)
     block = blockchain.create_block(nonce, prev_hash)
 
     response = {
