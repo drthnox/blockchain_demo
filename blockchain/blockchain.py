@@ -221,7 +221,7 @@ def fetch_transactions():
     return jsonify(response), 200
 
 
-@app.route('/nodes/list', methods=['GET'])
+@app.route('/nodes/get', methods=['GET'])
 def get_node_list():
     nodes = list(blockchain.nodes)
     response = {'nodes': nodes}

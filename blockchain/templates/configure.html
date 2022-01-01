@@ -106,15 +106,13 @@
         });
 
         $.ajax({
-           url: '/nodes/list',
+            url: '/nodes/get',
             type: 'GET',
             success: function(response) {
-                // Parse the response
                 let nodes = '';
-                for(i=0; i<response['nodes'].length; i++) {
-                    let link = response['nodes'][i];
-                    node = "<li><a href='http://" + link + "'>" + link + "</a></li>"
-                    document.getElementById('#nodes_list').innerHTML += node
+                for (i=0; i<response['nodes'].length; i++) {
+                    node = "<li><a href=http://" + response['nodes'][i] + ">" + response['nodes'][i] + "</a></li>"
+                    document.getElementById('nodes_list').innerHTML += node;
                 }
             },
             error: function(error) {
