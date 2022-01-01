@@ -151,14 +151,18 @@ class Blockchain:
         return True
 
     def register_node(self, node_url):
+        print("register_node: ", node_url)
         # check that URL is valid
         parsed_url = urllib.parse.urlparse(node_url)
+        print("parsed_url: ", parsed_url)
         if parsed_url.netloc:
             self.nodes.add(parsed_url.netloc)
         elif parsed_url.path:
             self.nodes.add(parsed_url.path)
         else:
             raise ValueError('Invalid URL')
+        print("registered nodes: ", self.nodes)
+
 
 # instantiate the blockchain
 blockchain = Blockchain()
@@ -171,6 +175,7 @@ CORS(app)
 @app.route("/")
 def index():
     return render_template('index.html')  # Flask will look inside templates/
+
 
 @app.route("/configure")
 def configure():
@@ -216,18 +221,20 @@ def fetch_transactions():
     return jsonify(response), 200
 
 
-@app.route('/nodes/get', methods=['GET'])
-def get_nodes():
-    nodes = blockchain.nodes
+@app.route('/nodes/list', methods=['GET'])
+def get_node_list():
+    nodes = list(blockchain.nodes)
     response = {'nodes': nodes}
     return jsonify(response), 200
 
 
-@app.route('/node/register', methods=['POST'])
-def register_node():
+@app.route('/nodes/register', methods=['POST'])
+def register_nodes():
     values = request.form
+    print("values = ", values)
     # expected: 127.0.0.1:5002, 127.0.0.1:5003, 127.0.0.1:5004, ...
     nodes = values.get('nodes').replace(' ', '').split(',')
+    print("nodes = ", nodes)
     if nodes is None:
         return 'Error: no nodes defined in request', 400
     for node in nodes:

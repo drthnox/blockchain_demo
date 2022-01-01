@@ -30,8 +30,56 @@
     </div>
 </nav>
 
+<!-- Add nodes -->
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card-body">
+                <h4 class="card-title">Add Blockchain nodes</h4>
+                <p class="card-text">Enter a list of Blockchain node URLs separated by commas and click on 'Add'
+                    button</p>
+            </div>
+        </div>
+    </div>
+</div>
 
+<div class="container alert alert-secondary">
+    <form id="node_form">
+        <div class="row">
+            <label class="col-sm-2">Node URLs:</label>
+            <div class="col-sm-10">
+                <input type="text" name="nodes" id="nodes" rows="2" class="form-control">
+            </div>
+        </div>
 
+        <br>
+
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <input type="button" id="add_node_button" class="btn btn-primary btn-lg" value="Add Node">
+            </div>
+        </div>
+    </form>
+</div>
+
+<hr>
+
+<!-- List of nodes -->
+<div class="container">
+    <div class="row">
+
+        <div class="col-lg-12">
+            <div class="card-body">
+                <h4 class="card-title">This node can retrieve Blockchain data from the following nodes:</h4>
+            </div>
+        </div>
+
+        <div class="col-lg-12" id="nodes_list">
+
+        </div>
+
+    </div>
+</div>
 
 <script src="{{ url_for('static',filename='vendor/jquery/jquery-3.6.0.min.js') }}"></script>
 <script src="{{ url_for('static',filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
@@ -40,9 +88,41 @@
 
 <script>
     $(function() {
+        $("#add_node_button").click(function() {
+            $.ajax({
+                url: '/nodes/register',
+                type: 'POST',
+                dataType: 'json',
+                data: $('#node_form').serialize(),
+                success: function(response) {
+                    // Empty the input box
+                    document.getElementById('nodes').value = '';
+                    window.location.reload();
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        $.ajax({
+           url: '/nodes/list',
+            type: 'GET',
+            success: function(response) {
+                // Parse the response
+                let nodes = '';
+                for(i=0; i<response['nodes'].length; i++) {
+                    let link = response['nodes'][i];
+                    node = "<li><a href='http://" + link + "'>" + link + "</a></li>"
+                    document.getElementById('#nodes_list').innerHTML += node
+                }
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
 
     });
-
 </script>
 
 </body>
