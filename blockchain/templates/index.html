@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Blockchain Frontend</title>
+    <title>Blockchain Node</title>
 
     <link rel="stylesheet" type="text/css"
           href="{{ url_for('static',filename='vendor/bootstrap/css/bootstrap.min.css') }}">
@@ -179,6 +179,23 @@
                     if(debug == 0) {
                         window.location.reload();
                     }
+                },
+               error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        $('#refresh_transactions').click(function(){
+            window.location.reload();
+        });
+
+        $('#refresh_blockchain').click(function(){
+            $.ajax({
+                url: '/nodes/resolve',
+                type: 'GET',
+                success: function(response) {
+                    window.location.reload();
                 },
                error: function(error) {
                     console.log(error);

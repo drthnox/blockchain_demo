@@ -85,7 +85,7 @@ def generate_transaction():
 
 @app.route('/transaction/history')
 def view_transactions():
-    return ''
+    return render_template('view_transactions.html')
 
 
 @app.route('/wallet/create')
